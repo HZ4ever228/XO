@@ -1,1 +1,1 @@
-# XO
+# XO - Game Client

@@ -39,23 +39,53 @@
                                     <action selector="gameModeSegmentControlAction:" destination="P5P-va-kgr" eventType="valueChanged" id="3KB-zd-iN3"/>
                                 </connections>
                             </segmentedControl>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Ja-s5-wOC">
-                                <rect key="frame" x="30" y="379" width="315" height="59.5"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="rQj-8Y-hFa">
+                                <rect key="frame" x="30" y="379" width="315" height="123"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose difficulty level" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aBY-vo-fyl">
-                                        <rect key="frame" x="0.0" y="0.0" width="315" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="r43-2E-9Ov">
-                                        <rect key="frame" x="0.0" y="28.5" width="315" height="32"/>
-                                        <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <segments>
-                                            <segment title="Easy"/>
-                                            <segment title="Hard"/>
-                                        </segments>
-                                    </segmentedControl>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Ja-s5-wOC">
+                                        <rect key="frame" x="0.0" y="0.0" width="315" height="59.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose difficulty level" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aBY-vo-fyl">
+                                                <rect key="frame" x="0.0" y="0.0" width="315" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="r43-2E-9Ov">
+                                                <rect key="frame" x="0.0" y="28.5" width="315" height="32"/>
+                                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <segments>
+                                                    <segment title="Easy"/>
+                                                    <segment title="Hard"/>
+                                                </segments>
+                                                <connections>
+                                                    <action selector="difficultyLevelSegmentControllAction:" destination="P5P-va-kgr" eventType="valueChanged" id="9xq-S2-qj1"/>
+                                                </connections>
+                                            </segmentedControl>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EJl-2M-hG1">
+                                        <rect key="frame" x="0.0" y="63.5" width="315" height="59.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose multiplayer game mode" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="94Z-K1-FEz">
+                                                <rect key="frame" x="0.0" y="0.0" width="315" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="1oX-bn-rOa">
+                                                <rect key="frame" x="0.0" y="20.5" width="315" height="40"/>
+                                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <segments>
+                                                    <segment title="Normal"/>
+                                                    <segment title="5 x 5"/>
+                                                </segments>
+                                                <connections>
+                                                    <action selector="multiplayerGameModeSegmentControlAction:" destination="P5P-va-kgr" eventType="valueChanged" id="iXc-Dv-xAF"/>
+                                                </connections>
+                                            </segmentedControl>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -63,18 +93,20 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="dWh-Op-mBU" firstAttribute="centerX" secondItem="3R6-Nm-a3d" secondAttribute="centerX" id="0Ei-6d-1X1"/>
-                            <constraint firstItem="0Ja-s5-wOC" firstAttribute="top" secondItem="JRU-3Z-OBD" secondAttribute="bottom" constant="30" id="4Go-nU-Q4i"/>
-                            <constraint firstItem="6oy-jW-5kJ" firstAttribute="trailing" secondItem="0Ja-s5-wOC" secondAttribute="trailing" constant="30" id="ABV-OA-aGS"/>
+                            <constraint firstItem="6oy-jW-5kJ" firstAttribute="trailing" secondItem="rQj-8Y-hFa" secondAttribute="trailing" constant="30" id="D5S-hx-HMB"/>
                             <constraint firstItem="JRU-3Z-OBD" firstAttribute="top" secondItem="dWh-Op-mBU" secondAttribute="bottom" constant="50" id="J78-Ev-7h6"/>
                             <constraint firstItem="JRU-3Z-OBD" firstAttribute="centerX" secondItem="3R6-Nm-a3d" secondAttribute="centerX" id="JQi-P8-1LO"/>
-                            <constraint firstItem="0Ja-s5-wOC" firstAttribute="leading" secondItem="6oy-jW-5kJ" secondAttribute="leading" constant="30" id="Tsm-nq-Be5"/>
                             <constraint firstItem="JRU-3Z-OBD" firstAttribute="centerY" secondItem="3R6-Nm-a3d" secondAttribute="centerY" id="ldd-Xg-bzp"/>
+                            <constraint firstItem="rQj-8Y-hFa" firstAttribute="leading" secondItem="6oy-jW-5kJ" secondAttribute="leading" constant="30" id="nhr-M7-Kgv"/>
+                            <constraint firstItem="rQj-8Y-hFa" firstAttribute="top" secondItem="JRU-3Z-OBD" secondAttribute="bottom" constant="30" id="pfw-iG-H1P"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="difficultyLevelSegmentedControl" destination="r43-2E-9Ov" id="zhd-dv-CTE"/>
                         <outlet property="gameDifficultyStackView" destination="0Ja-s5-wOC" id="GAk-Ug-UdM"/>
                         <outlet property="gameModeSegmentedControl" destination="dWh-Op-mBU" id="Htx-WY-RJI"/>
+                        <outlet property="multiplayerGameModeSegmentedControl" destination="1oX-bn-rOa" id="0gK-gE-MC3"/>
+                        <outlet property="multiplayerGameModeStackView" destination="EJl-2M-hG1" id="Mnx-KX-Fsj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cvw-Yc-Iqn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -25,6 +25,7 @@ class GameViewController: UIViewController {
     // MARK: - Private Properties
     
     private lazy var referee = Referee(gameboard: gameboard)
+    private lazy var invoker = GameBoardPositionsInvoker()
     
     private let gameboard = Gameboard()
     private var currentState: GameState! {
@@ -39,6 +40,73 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         goToFirsState()
+        configureGame()
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func restartButtonTapped(_ sender: UIButton) {
+        log(.restart)
+    }
+    
+    // MARK: - Private Functions
+    
+    private func configureGame() {
+        guard let gameMode = gameMode else { return }
+        switch gameMode {
+            
+        case .multiPlayer(let mode):
+            switch mode {
+            case .normal:
+                configureForSinglePlayerOrNormalMultiplayer()
+            case .fiveXFive:
+                configureFor5x5()
+            }
+        case .singlePlayer(_):
+            configureForSinglePlayerOrNormalMultiplayer()
+        }
+    }
+    
+    private func configureFor5x5(){
+        gameboardView.onSelectPosition = { [weak self] position in
+            guard let self = self else {
+                return
+            }
+            print("position: \(position)")
+            let comandCount = self.invoker.comandsCount()
+            if comandCount < 5 {
+                if !self.gameboard.contains(player: .first, at: position) {
+                    self.gameboardView.placeMarkView(XView(), at: position)
+                    let addXMarkViewCommand = AddXMarkViewCoommand(position: position, gameboardView: self.gameboardView)
+                    self.invoker.addComand(comand: addXMarkViewCommand)
+                }
+            } else if comandCount == 5 {
+                self.gameboardView.clear()
+                let addOMarkViewCommand = AddOMarkViewCoommand(position: position, gameboardView: self.gameboardView)
+                self.invoker.addComand(comand: addOMarkViewCommand)
+                self.gameboardView.placeMarkView(OView(), at: position)
+            } else if comandCount > 5 && comandCount < 10 {
+                if !self.gameboard.contains(player: .second, at: position) {
+                    self.gameboardView.placeMarkView(OView(), at: position)
+                    let addOMarkViewCommand = AddOMarkViewCoommand(position: position, gameboardView: self.gameboardView)
+                    self.invoker.addComand(comand: addOMarkViewCommand)
+                }
+            } else if comandCount == 10 {
+                self.gameboardView.clear()
+                self.invoker.addMarksOnBoard()
+                if let winner = self.referee.determineWinner() {
+                    self.currentState = GameEndedState(winner: winner, gameViewController: self)
+                    return
+                }
+            }
+            
+//            if self.currentState.isCompleted {
+//                self.goToNextState()
+//            }
+        }
+    }
+    
+    private func configureForSinglePlayerOrNormalMultiplayer() {
         
         gameboardView.onSelectPosition = { [weak self] position in
             guard let self = self else {
@@ -52,14 +120,6 @@ class GameViewController: UIViewController {
             }
         }
     }
-    
-    // MARK: - Actions
-    
-    @IBAction func restartButtonTapped(_ sender: UIButton) {
-        log(.restart)
-    }
-    
-    // MARK: - Private Functions
     
     private func goToFirsState() {
         let player = Player.first
@@ -106,7 +166,7 @@ class GameViewController: UIViewController {
                         gameboardView: gameboardView)
                 }
                     
-            case .multiPlayer:
+            case .multiPlayer(let mode):
                 if let playerInputState = currentState as? PlayerInputState {
                     let player = playerInputState.player.next
                     currentState = PlayerInputState(

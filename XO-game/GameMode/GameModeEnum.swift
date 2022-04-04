@@ -13,7 +13,12 @@ enum GameDifficulty {
     case hard
 }
 
+enum MultiplayerMode {
+    case normal
+    case fiveXFive
+}
+
 enum GameModeEnum {
     case singlePlayer(difficulty: GameDifficulty)
-    case multiPlayer
+    case multiPlayer(mode: MultiplayerMode)
 }

@@ -17,18 +17,21 @@ class AddXMarkViewCoommand: Command {
     
     private var position: GameboardPosition
     private var gameboardView: GameboardView
+    private var gameboard: Gameboard
     private var timer = Timer()
     
     func execute(with interval: Double) {
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
             self.gameboardView.removeMarkView(at: self.position)
             self.gameboardView.placeMarkView(XView(), at: self.position)
+            self.gameboard.setPlayer(.first, at: self.position)
         }
     }
     
-    init(position: GameboardPosition, gameboardView: GameboardView) {
+    init(position: GameboardPosition, gameboardView: GameboardView,  gameboard: Gameboard) {
         self.position = position
         self.gameboardView = gameboardView
+        self.gameboard = gameboard
     }
 }
 
@@ -36,18 +39,21 @@ class AddOMarkViewCoommand: Command {
     
     private var position: GameboardPosition
     private var gameboardView: GameboardView
+    private var gameboard: Gameboard
     private var timer = Timer()
     
     func execute(with interval: Double) {
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
             self.gameboardView.removeMarkView(at: self.position)
             self.gameboardView.placeMarkView(OView(), at: self.position)
+            self.gameboard.setPlayer(.first, at: self.position)
         }
     }
     
-    init(position: GameboardPosition, gameboardView: GameboardView) {
+    init(position: GameboardPosition, gameboardView: GameboardView, gameboard: Gameboard) {
         self.position = position
         self.gameboardView = gameboardView
+        self.gameboard = gameboard
     }
 }
 
@@ -59,10 +65,10 @@ class GameBoardPositionsInvoker {
     private let xPositionsMaxCount = 5
     private let oPositionsMaxCount = 5
     
-    var timer = Timer()
-    
     private var firstPlayerComands: [Command] = []
     private var secondPlayerComands: [Command] = []
+    
+    var gamaIsEnd = false
     
     func addComand(comand: Command) {
         if firstPlayerComands.count < 5 {
@@ -72,8 +78,16 @@ class GameBoardPositionsInvoker {
         }
     }
     
+    func firstPlayerComandCount() -> Int {
+        return firstPlayerComands.count
+    }
+    
+    func secondPlayerComandsCount() -> Int {
+        return secondPlayerComands.count
+    }
+    
     func comandsCount() -> Int {
-        return firstPlayerComands.count + secondPlayerComands.count
+        return firstPlayerComandCount() + secondPlayerComandsCount()
     }
     
     func addMarksOnBoard () {
@@ -84,6 +98,7 @@ class GameBoardPositionsInvoker {
                 comand.execute(with: interval)
                 interval += 1
             }
+            gamaIsEnd = true
         } else {
             return
         }

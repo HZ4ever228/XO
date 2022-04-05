@@ -21,6 +21,7 @@ class GameViewController: UIViewController {
     @IBOutlet var secondPlayerTurnLabel: UILabel!
     @IBOutlet var winnerLabel: UILabel!
     @IBOutlet var restartButton: UIButton!
+    var timer = Timer()
     
     // MARK: - Private Properties
     
@@ -39,7 +40,7 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        goToFirsState()
+        
         configureGame()
     }
     
@@ -58,13 +59,28 @@ class GameViewController: UIViewController {
         case .multiPlayer(let mode):
             switch mode {
             case .normal:
+                goToFirsState()
                 configureForSinglePlayerOrNormalMultiplayer()
             case .fiveXFive:
+                goToFirs5x5State()
                 configureFor5x5()
             }
         case .singlePlayer(_):
+            goToFirsState()
             configureForSinglePlayerOrNormalMultiplayer()
         }
+    }
+    
+    //MARK: - 5x5 Multiplayer
+    
+    private func goToFirs5x5State() {
+        let player = Player.first
+        currentState = FiveXFiveInputState(player: .first,
+                                        markViewPrototype: player.markViewPrototype,
+                                        gameViewController: self,
+                                        gameboard: gameboard,
+                                        gameboardView: gameboardView,
+                                        invoker: invoker)
     }
     
     private func configureFor5x5(){
@@ -72,38 +88,60 @@ class GameViewController: UIViewController {
             guard let self = self else {
                 return
             }
-            print("position: \(position)")
-            let comandCount = self.invoker.comandsCount()
-            if comandCount < 5 {
-                if !self.gameboard.contains(player: .first, at: position) {
-                    self.gameboardView.placeMarkView(XView(), at: position)
-                    let addXMarkViewCommand = AddXMarkViewCoommand(position: position, gameboardView: self.gameboardView)
-                    self.invoker.addComand(comand: addXMarkViewCommand)
-                }
-            } else if comandCount == 5 {
-                self.gameboardView.clear()
-                let addOMarkViewCommand = AddOMarkViewCoommand(position: position, gameboardView: self.gameboardView)
-                self.invoker.addComand(comand: addOMarkViewCommand)
-                self.gameboardView.placeMarkView(OView(), at: position)
-            } else if comandCount > 5 && comandCount < 10 {
-                if !self.gameboard.contains(player: .second, at: position) {
-                    self.gameboardView.placeMarkView(OView(), at: position)
-                    let addOMarkViewCommand = AddOMarkViewCoommand(position: position, gameboardView: self.gameboardView)
-                    self.invoker.addComand(comand: addOMarkViewCommand)
-                }
-            } else if comandCount == 10 {
-                self.gameboardView.clear()
-                self.invoker.addMarksOnBoard()
-                if let winner = self.referee.determineWinner() {
-                    self.currentState = GameEndedState(winner: winner, gameViewController: self)
-                    return
+            
+            self.currentState.addMark(at: position)
+            
+            if self.currentState.isCompleted {
+                self.goToNext5x5State()
+            }
+        }
+    }
+    
+    private func goToNext5x5State() {
+        if invoker.comandsCount() == 10 {
+            gameboardView.clear()
+            invoker.addMarksOnBoard()
+            
+            timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { [weak self] _ in
+                guard let self = self else { return }
+                if self.invoker.gamaIsEnd {
+                    if let winner = self.referee.determineWinner() {
+                        self.currentState = GameEndedState(winner: winner, gameViewController: self)
+                        return
+                    } else {
+                        print("there is no winner")
+                    }
+                } else {
+                    print("game is not end")
                 }
             }
             
-//            if self.currentState.isCompleted {
-//                self.goToNextState()
-//            }
+            
+        } else {
+            if let playerInputState = currentState as? FiveXFiveInputState {
+                let player = playerInputState.player.next
+                currentState = FiveXFiveInputState(
+                    player: player,
+                    markViewPrototype: player.markViewPrototype,
+                    gameViewController: self,
+                    gameboard: gameboard,
+                    gameboardView: gameboardView,
+                    invoker: invoker)
+                gameboardView.clear()
+            }
         }
+        
+    }
+    
+    //MARK: - Single Player or normal Multiplayer
+    
+    private func goToFirsState() {
+        let player = Player.first
+        currentState = PlayerInputState(player: .first,
+                                        markViewPrototype: player.markViewPrototype,
+                                        gameViewController: self,
+                                        gameboard: gameboard,
+                                        gameboardView: gameboardView)
     }
     
     private func configureForSinglePlayerOrNormalMultiplayer() {
@@ -119,15 +157,6 @@ class GameViewController: UIViewController {
                 self.goToNextState()
             }
         }
-    }
-    
-    private func goToFirsState() {
-        let player = Player.first
-        currentState = PlayerInputState(player: .first,
-                                        markViewPrototype: player.markViewPrototype,
-                                        gameViewController: self,
-                                        gameboard: gameboard,
-                                        gameboardView: gameboardView)
     }
     
     private func goToNextState() {
